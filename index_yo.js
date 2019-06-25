@@ -1,142 +1,9 @@
-// ----- expresion de funcion anonima autoejecutable--------
-
-// (function(){
-
-// })();
-
-// (function saludar(){
-//     alert("hola");
-// })
-// saludar();
-
-// // quedaria así ..
-// (function(){
-//     alert("hola");
-// })();
-
-
-//  Sirve para prevenir el hoisting
-// proteger los datos
-
-// patron chain (cadena)
-
-// console.log('holaaaaa'); --> probando node
-
-
-// const math = require('./math');
-
-// // add
-// console.log(math.add(1, 2));
-// console.log(math.substract(1, 2));
-// console.log(math.division(1, 2));
-// console.log(math.division(1, 0));
-// console.log(math.multiply(1, 2));
-
-
-
-//-----------------Codigo asincrono-------------------------
-// const fs = require('fs');
-
-// fs.writeFile('./texto2.txt', 'hola cosito bonito', function(err){  // con esto creo un nuevo archivo
-//     if(err){
-//          console.log(err);       //callback (termina de crearse el archivo y se ejecuta la funcion)
-//     }
-//     console.log('archivo creado'); //codigo asincrono
-// });
-// console.log('ultima linea de codigo');
-
-//----------puede seguir leyendo mas abajo, por lo que cuando 
-//termine aparecera primero mis lineas de mas abajo y al final el 
-//archivo creado--------------
-
-//-----------codigo bloqueante------------------
-//   const user =query('Select * from users');
-// ----- no permite que siga leyendo hacia abajo, debe esperar
-// a que termine de ejecutarse
-
-//req quiere decir request , que es la peticion --> links
-// res quiere decir response, que es la respuesta  --> links
-
-
-//codigos de estado HTTP --> como responde el servidor al 
-//navegador, devuelve en numeros.
-
-
-
-//----------ejemplo leyendo archivo math.js-----------------
-// var fs = require('fs');
-
-// fs.readFile('math.j', 'utf8',           // --- recibe dos parametros y devuelve la funcion 
-//    function(err, dati) {               // --- err y data lo llena la funcion readFile 
-//         if (err) {                           // callback : devuelve una funcion(con todos los parametros llenos)
-//             return console.log(err);
-//         }
-//          console.log(dati);
-//     }
-// );
-
-//----SIN CICLO--------ejemplo leyendo archivo readme.md ---------
-
-// var fs = require('fs');                     // El método readFile recibe 3 argumentos: la ruta al archivo, la codificación y una función 
-
-// fs.readFile('README.md', 'utf8',            // que va a ser invocada cuando se lea el archivo (a esta función se le llama callback).
-//    function(err, data) {               
-//         if (err) {                           // callback : devuelve una funcion(con todos los parametros llenos)
-//             return console.log(err);
-//         }
-
-//         let miLink = data.indexOf('http', 0);
-//         let finLink = data.indexOf(')', miLink);
-//          console.log(miLink);
-//          console.log(data[miLink] + data[miLink + 1] + data[miLink + 2] + data[miLink + 3]);
-//          console.log(finLink);
-
-//          let myUrl = data.substring(miLink, finLink);
-//          console.log(myUrl);
-
-//     }
-// );
-
-
-// //------------ejemplo leyendo archivo readme.md ..el ciclo concatenó---------
-
-// var fs = require('fs');                     // El método readFile recibe 3 argumentos: la ruta al archivo, la codificación y una función 
-
-// fs.readFile('README.md', 'utf8',            // que va a ser invocada cuando se lea el archivo (a esta función se le llama callback).
-//    function(err, data) {               
-//         if (err) {                           // callback : devuelve una funcion(con todos los parametros llenos)
-//             return console.log(err);
-//         }
-
-//         links = [];
-
-//         let inicioLink = 0;
-//         while(inicioLink < data.length){
-//             inicioLink = data.indexOf('http', inicioLink);
-//         if(inicioLink < 0){
-//             return
-//         }
-//         let finLink = data.indexOf(')', inicioLink);
-       
-
-//          let myUrl = data.substring(inicioLink, finLink);
-//          console.log(myUrl);
-//          inicioLink ++;
-
-//          myObjectUrl = {'href' : myUrl }
-//          links.push(myObjectUrl);
-//          console.log(links);              --> fue concatenando pasando por cada uno mil veces
-//         }
-       
-        
-//     }
-    
-// );
-
 //------------ejemplo leyendo archivo readme.md ---------
 
 const fs = require('fs');                     // El método readFile recibe 3 argumentos: la ruta al archivo, la codificación y una función 
 const fetch = require("node-fetch");
+let validate = false;
+let stats = false; 
 const searchLinks = (path) => {
 fs.readFile(path, 'utf8',            // que va a ser invocada cuando se lea el archivo (a esta función se le llama callback).
    function(err, data) {               
@@ -144,7 +11,7 @@ fs.readFile(path, 'utf8',            // que va a ser invocada cuando se lea el a
             return console.log(err);
         }
 
-        let links = [];
+        let links = [];     // array con el objeto de url. path, title
         let inicioLink = 0;
 
         while (inicioLink < data.length) {
@@ -176,7 +43,7 @@ fs.readFile(path, 'utf8',            // que va a ser invocada cuando se lea el a
                //significa que no encontro enter
                let myObjectUrl = {
                 'href': myUrl,
-                'title' : myTitle,
+                'text' : myTitle,
                 'file' : path
             }
             links.push(myObjectUrl);
@@ -199,50 +66,89 @@ fs.readFile(path, 'utf8',            // que va a ser invocada cuando se lea el a
             // res('exito al procesar datos');              // en las promesas tengo res y rej
             // rej('existe un error');
             let linkslarge  = links.length; 
-            links.forEach(element => {
+            links.forEach(element => {    //element es mi objeto y tiene tres cosas: element.href, element.title, element.path
                 // console.log('titulo:' + element.title);
                 //------------utilizando un feth----------
                 // cargando fetch https://stackoverflow.com/questions/48433783/referenceerror-fetch-is-not-defined
-                fetch(element.href)
-                    .then(function (response) {
-                        linkslarge--;
-                        addOk++ ;
+                fetch(element.href)       //ejecuto una url, por lo que se la debo pasar. Si esta mala se irá al catch (es como hacerle click a la url)
+                  .then(function (response) {  // datos de cabecera (titulos, estatus, url, etc)
+                    linkslarge--;                // en este then cae si la pagina responde, pero luego puede ser false, al entrar puede estar mala, pero genero una respuesta 
+                   
                     // console.log(addOk);
-                    console.log('response.ok =', response.ok);
-        console.log('response.status =', response.status);
-        // console.log('response.statusText =', response.statusText);
-        // console.log('response.url =', response.url);
-                      if (linkslarge === 0){
-                        console.log('linkslarge: '+linkslarge);
-                          res('termine de las buenas');
-                      }
-                   
-                    })
-                    .then(function (data) {
-                        // console.log('data = ', data);
-                    })
-                    .catch(function (err) {
-                       
-                        linkslarge--;
-                        addFail++;
-                        if (linkslarge === 0){
-                            console.log(linkslarge);
-                            res('termine de las malas');
+                    // console.log('response.statusText =', response.statusText);
+                    // if (response.ok === true && element.href === response.url) {
+                    //     addOk++;
+                    // }else{         //la pagina no esta en buen estado, no funciona.
+                    //     console.log('response.ok =', response.ok);
+                    //     console.log('response.status =', response.status); 
+                    //     if(element.href != response.url){
+                    //         console.log('mi url enviada es : ' +  element.href);
+                    //     }
+                    //     console.log('url que me trae es =', response.url); // aqui me llega la que el servidor responde (lo que abre, lo cual aveces cambia)
+                    //     addFail++;  
+                    //     console.log('------------------------------------------------------------------');
+                    // }
+                    // if (response.ok === false) {  //la pagina no esta en buen estado, no funciona.
+                    //     console.log('response.ok =', response.ok);
+                    //     console.log('response.status =', response.status);
+                    //     console.log('mi url enviada es : ' +  element.href);
+                    //      addFail++; 
+                    //      console.log('------------------------------------------------------------------');
+                    // }else{        
+                    //     addOk++;
+
+                    // }
+                        addOk++; 
+                        if(validate=== false && stats === false){
+                             console.log(element.file + ' ' + element.href + ' ' + element.text);  // primera ejecucion solo archivos ----> cuando no ingresan paramtros (validate o stats)
                         }
-                    });
-                   
-            });
-            // res('fdfdgfd')
+                        if(validate === true && stats === false){
+                             console.log(element.file + ' ' + element.href + ' ' + response.statusText + ' ' + response.status + ' ' + element.text);  // corresponde a validate
+                       }
+                        
+
+
+
+                    if (linkslarge === 0) {
+                    //   console.log('linkslarge: ' + linkslarge);
+                      res('termine de ejecutar la promesa');
+                    }
+
+                  })
+                  .then(function (data) {   // cuando trae datos ingresa acá (data)
+                    // console.log('data = ', data);
+                  })
+                  .catch(function (err) { // aqui cae cuando la url esta completamente caida
+
+                    linkslarge--;
+                    addFail++;    // va sumando los errores
+                    // console.log('catch url fail : ' + element.href);
+                    // console.log('--------------------------------------------------------');
+                    if (linkslarge === 0) {
+                    //   console.log(linkslarge);
+                      res('termine el proceso');
+                    }
+                  });
+
+                });
         });
         
 
 
 
-        promesa.then((resultado)=> {       // con esto obtengo el resultado de mi promesa 
-             console.log('ok : '+resultado);     
-             console.log('las buenas son ' + addOk + ' y las malas son ' + addFail);
+        promesa.then((respuesta)=> {       // con esto obtengo el resultado de mi promesa    // responde al resolve
+            //  console.log('resultado : '+ respuesta);     
+            if(stats === true && validate === false){
+                console.log('Total: '+ links.length);
+                console.log('Correctas/UNIQUE: ' + addOk) 
+            }
+            if(stats === true && validate === true){
+             console.log('Total: '+ links.length);
+             console.log('Correctas/UNIQUE: ' + addOk) 
+             console.log('Broken: ' + addFail);     // corresponde a estadistica
                       // puedo llamar al resultado 
-        }, (error)=>{
+            }
+        }, (error)=>{                 // es el reject
             console.log('si hay:  ' + error);
         });
 
@@ -253,6 +159,26 @@ fs.readFile(path, 'utf8',            // que va a ser invocada cuando se lea el a
     
 );
 }
+
+//****************************************************************************************************************
+
+process.argv.forEach((option, index, array)=>{
+    // console.log('index : ', index , 'value' , option);
+    if(index > 1 && index < 5){
+      if(option == '--validate' || option == '--v') {
+        validate = true;
+      }else if (option == '--stats' || option == '--s'){
+        stats = true;
+      }else {
+        console.log('opncion no valida', option);
+      }
+    }
+  });
+
+
+
+
+
 searchLinks('./README.md');   // esto lo cambiare mas adelante, para que no quede fijo, desde cualquier parte debo 
                               // lograr que sea llamada mi funcion y que se le pase cualquier archivo
 
