@@ -11,9 +11,9 @@ let addOk = 0;
 let addFail = 0;
 let linkslarge = 0;
 
-//------------------Lectura de archivo---------------
-const searchLinks = (path) => {
-  fs.readFile(path, 'utf8',
+const readMarkdown = (path) =>{  //Funcion para leer archivos
+  let promesa2 = new Promise((res, rej) => {  //-----Inicio promesa2-----------
+    fs.readFile(path, 'utf8',
     function (err, data) {
       if (err) {
         return console.log(err);
@@ -50,7 +50,22 @@ const searchLinks = (path) => {
           links.push(myObjectUrl);
         }
       } // -------Fin ciclo while-----------
+      res('Terminado readFile');
+    });
+  });//--------------Fin promesa2---------
+  
+ 
+      //----------LLamando a la promesa2--------------------------
+      promesa2.then((respuesta) => { // Obtengo el resultado de mi promesa (resolve)
+// console.log(respuesta); ---> respuesta recoge lo que entrega 'res'
+        validateLinks(); // Llamo la que esta arriba
+      }, (error) => { // Es el reject
+        console.log('si hay:  ' + error);
+      }); //------fin llamado promesa2--------
 
+}//----Fin readMarkdown()-----------
+
+const validateLinks =()=>{ //Promesa para validar
       //Inicio contador de links ok y fail    
       addOk = 0;
       addFail = 0;
@@ -96,12 +111,12 @@ const searchLinks = (path) => {
       //----------LLamando a la promesa--------------------------
       promesa.then((respuesta) => { // Obtengo el resultado de mi promesa (resolve)
 
-        if (stats === true && validate === false) {
+        if (stats === true && validate === false) { // Corresponde al ingreso de --s
           console.log('Total: ' + links.length);
           console.log('Unique: ' + addOk)
         }
 
-        if (stats === true && validate === true) { // Corresponde a stats
+        if (stats === true && validate === true) { // Corresponde al ingreso de --s y --v
           console.log('Total: ' + links.length);
           console.log('Unique: ' + addOk)
           console.log('Broken: ' + addFail);
@@ -109,9 +124,19 @@ const searchLinks = (path) => {
       }, (error) => { // Es el reject
         console.log('si hay:  ' + error);
       });
-    }
-  );
+}//------Fin validateLinks()----------
+const validateExtensionFile=(path)=>{
+console.log('Validando la extension del nombre'); //que solo lea archivos md
 }
+
+//------------------Lectura de archivo---------------
+const searchLinks = (path) => {
+  validateExtensionFile(path); //Funcion para validar la extension
+  readMarkdown(path);
+  
+} 
+
+
 
 /****************************************************************************************************************/
 //-------Uso de process----------
@@ -123,7 +148,7 @@ process.argv.forEach((option, index, array) => {
     } else if (option == '--stats' || option == '--s') {
       stats = true;
     } else {
-      console.log('opncion no valida', option);
+      console.log('No es valida esta opción', option);
     }
   }
 });
