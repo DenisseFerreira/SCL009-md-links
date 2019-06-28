@@ -2,6 +2,38 @@
   "name": "md-links",
   "version": "0.1.0",
   "dependencies": {
-    "node-fetch": "^2.6.0"
-  }
+    "eslint-plugin-jest": "^22.7.1",
+    "jest": "^24.8.0",
+    "link": "^0.1.5",
+    "node-fetch": "^2.6.0",
+    "save": "^2.4.0"
+  },
+  "description": "## Preámbulo",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DenisseFerreira/SCL009-md-links.git"
+  },
+  "keywords": [
+    "markdown",
+    "node",
+    "javascript",
+    "librería"
+  ],
+  "author": "Denisse Ferreira",
+  "license": "ISC",
+  "bin": {
+    "md-links": "md-links.js"
+  },
+  "bugs": {
+    "url": "https://github.com/DenisseFerreira/SCL009-md-links/issues"
+  },
+  "homepage": "https://github.com/DenisseFerreira/SCL009-md-links#readme"
 }

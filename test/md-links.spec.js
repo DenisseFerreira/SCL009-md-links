@@ -8,3 +8,7 @@ describe('mdLinks', () => {
   });
 
 });
+
+
+// Debo testear: las promesas, el catch, el then.
+// path file y opciones debe recibir mdLinks

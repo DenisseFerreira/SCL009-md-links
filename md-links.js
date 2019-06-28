@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*Uso de librerias de node.js*/
 const fs = require('fs');
 const fetch = require("node-fetch");
