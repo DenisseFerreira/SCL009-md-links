@@ -1,21 +1,24 @@
 {
-  "name": "md-links",
-  "version": "0.1.0",
+  "name": "denisse-md-links",
+  "version": "0.0.1",
   "dependencies": {
     "eslint-plugin-jest": "^22.7.1",
-    "jest": "^24.8.0",
     "link": "^0.1.5",
     "node-fetch": "^2.6.0",
     "save": "^2.4.0"
   },
-  "description": "## Preámbulo",
+  "description": "Markdown Links project",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "jest": "^24.8.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage",
+    "eslint": "eslint --ext .js test/",
+    "pretest": "npm run eslint"
   },
   "repository": {
     "type": "git",
