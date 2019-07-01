@@ -78,4 +78,5 @@ $ md-links ./some/example.md --stats
 Total: 2
 Unique: 2
 Broken: 1
+Links ok: 1
 ```
