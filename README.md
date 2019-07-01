@@ -82,3 +82,35 @@ Broken: 1
 ## Documentación técnica
 es la instalacion 
 ***hacer video y transformarlo en gif. Un demo.
+
+
+Versión
+Markdown-links-finder se encuentra en su versión 1.0.0, que incluye:
+
+Lectura de archivos ".md"
+Ruta
+Nombre de archivo
+Links
+Texto de links
+Validación de links con --validate
+
+
+Planificación
+En lugar de utilizar issues y milestones, se decidió utilizar Trello para planificar este proyecto, puede revisar la planificación en el siguiente link:
+
+
+
+Características clipboard
+Lee solo archivos con la extensión .md
+Extrae y lista todos los links que contenga el archivo
+Agregando la opción --validate valida estado actual de los links encontrados
+Iniciar rocket
+Para comenzar debes tener instalado Node.js en tu computador.
+
+Instalación wrench
+Para instalación global en la consola de tu proyecto debes instalar
+
+npm install -g md-links-cl
+Para instalar dependencia
+
+npm i md-links-cl --save

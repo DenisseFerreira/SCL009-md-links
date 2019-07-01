@@ -30,7 +30,7 @@
   "author": "Denisse Ferreira",
   "license": "ISC",
   "bin": {
-    "md-links": "md-links.js"
+    "md-links": "index.js"
   },
   "bugs": {
     "url": "https://github.com/DenisseFerreira/SCL009-md-links/issues"
