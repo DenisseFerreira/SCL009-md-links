@@ -159,7 +159,10 @@ const statsLinks = () => {
 }
 
 //----------validar Links-------------
-const validateLinks = () => {
+const validateLinks = (links) => {
+  return Promise.all(links.map(link => {
+
+
   return new Promise((res, reject) => {
     //Inicio contador de links ok y fail    
     addOk = 0;
@@ -172,20 +175,24 @@ const validateLinks = () => {
           addOk++;
           linkslarge--;
           if (validate === false && stats === false) { // Sin ingreso de validate o stats
-            console.log(element.file + ' ' + element.href + ' ' + element.text);
+           let noOption = (element.file + ' ' + element.href + ' ' + element.text);
+            // console.log(noOption);
+            res(noOption);
           }
           if (validate === true && stats === false) { // Ingresa --validate
             console.log(element.file + ' ' + element.href + ' ' + response.statusText + ' ' + response.status + ' ' + element.text);
           }
 
           if (linkslarge === 0) {
-            res('Termine de ejecutar la promesa');
+            res(element);
           }
         })
         .then(function (data) { // Data de la url
           // console.log('data = ', data);
         })
         .catch(function (err) { // Url caida
+// console.log("Tienes un error en tu status", err);
+
           // console.log(err);
           linkslarge--;
           addFail++; // va sumando los errores
@@ -199,12 +206,16 @@ const validateLinks = () => {
           }
           if (linkslarge === 0) {
             //   console.log(linkslarge);
-            res('Termine el proceso');
+ 
+            res(element);
+                reject("Error al leer estatus");
           }
         });
     });
   });
-} //------Fin validateLinks()----------
+}));
+} 
+//------Fin validateLinks()----------
 
 
 //------------------Lectura de archivo---------------
@@ -237,7 +248,13 @@ async function mdLinks(path, option) {
   await validateExtensionFile(path); //Funcion para validar la extension y si es archivo o directorio 
   await readMarkdown();
   uniqueLinks();
-  await validateLinks(); // Función Segunda promesa, debe estar aqui adentro por su demora en validar cada link. Estando afuera no es leida.
+  await validateLinks()
+    .then(res => {
+      console.log("RESPONSE:",res);
+    })
+    .catch(err => {
+      console.log("ERR:", err);
+    }) // Función Segunda promesa, debe estar aqui adentro por su demora en validar cada link. Estando afuera no es leida.
   statsLinks();
 } // Fin funcion mdLinks
 
