@@ -17,33 +17,49 @@ let listFile = [];
 let path;
 
 //----leyendo directorio o archivos con extension .md-------
+const returnLinks = ()=>{
+   return links;
+}
 
 const validateExtensionFile = (path) => {
   return new Promise((res, reject) => {
+    listFile = [];
     // validar si es archivo o directorio
+    if (path == '' || path == undefined || path == null) {
+      reject("No has ingresado un archivo");
+      console.log("Te falta ingresar un archivo");  // nuevas, pero esta en options, subio el branch
+      return;
+    } 
     if (path.substr(-3) === '.md') {
       listFile.push(path);
-      res('Es un archivo');
-    } else {
-
+      res(listFile);
+      return;
+    } 
+  
+    else {
       fs.readdir(path, function (err, files) { //Callback
+        if(err){
+          console.log(err);
+          reject("Hay un error con tu directorio"); 
+          // return
+        }
         if (files == undefined || files == '') {
           console.log('No es archivo con extension md');
           // res('No encontro archivo md');
+          reject("Error al leer directorio");
           return;
         }
-        // console.log(path);
-        // console.log(files);
         listFile = files.filter(function (file) {
           return file.substr(-3) === '.md';
         })
-        // console.log(path);
+        if(listFile.length == 0){
+          reject("No hay archivo .md");
+          console.log("No encontró archivo .md");
+        }
         for (let index = 0; index < listFile.length; index++) {
           listFile[index] = path + listFile[index];
-
         }
-        // console.log(listFile);
-        res('Es un directorio');
+        res(listFile);
       });
     }
   }) //-----Fin promise
@@ -52,14 +68,17 @@ const validateExtensionFile = (path) => {
 //-----Funcion para leer archivos------------
 const readMarkdown = () => {
   return new Promise((res, reject) => {
+links = [];
     let listFileLarge = listFile.length;
-
+    // console.log("busco archivo en readMarkdown", res);
     for (let index = 0; index < listFile.length; index++) {
       fs.readFile(listFile[index], 'utf8',
         function (err, data) { //callback
-          if (err) {
-            return console.log(err);
+          if (err) {  
+            reject('No hay links en este archivo');      
+            return console.log(err);    
           }
+        
           listFileLarge--;
           // ------------ Inicio ciclo While----------
           /*Permite la búsqueda de los links, mediante el uso de Vanilla js*/
@@ -91,11 +110,19 @@ const readMarkdown = () => {
                 'file': listFile[index]
               }
               links.push(myObjectUrl);
-            }
+           }           
           } // -------Fin ciclo while
           // if (listFile.length -1  === index)
-          if (listFileLarge === 0)
-            res('Terminado readFile');
+        
+          if (listFileLarge === 0){
+            if(links.length === 0){
+            
+              return console.log("No encuentro links en este archivo");
+            }else{
+              res(links);
+            }
+          }
+            // console.log(links);
         });
     } //---------final for
   }); //--------------Fin promesa2
@@ -112,6 +139,7 @@ const uniqueLinks = () => {
   unique = sorted.filter(function (value, index) {
     return value !== sorted[index + 1];
   });
+  return unique;
   // console.log(unique.length);
 }
 
@@ -180,13 +208,10 @@ const validateLinks = () => {
 
 
 //------------------Lectura de archivo---------------
+
 async function mdLinks(path, option) {
   let flagError  = false;
   option.forEach(element => {
-    // if (element.validate === true)
-    //   validate = true;
-    // if (element.stats === true)
-    //   stats = true;
       if (element == '--validate' || element == '--v') {
         validate = true;
   
@@ -194,7 +219,6 @@ async function mdLinks(path, option) {
         stats = true;
   
       } else {
-  
         console.log('No es valida esta opción', element);
         flagError = true;
         return;
@@ -205,12 +229,7 @@ async function mdLinks(path, option) {
      console.log("No  es posible procesar");
      return;
    }
-
-
-
-
-
-  if (path == undefined || path == null || path == '') {
+ if (path == undefined || path == null || path == '') {
     console.log('El nombre del archivo esta vacio');
     return;
   }
@@ -222,4 +241,23 @@ async function mdLinks(path, option) {
   statsLinks();
 } // Fin funcion mdLinks
 
-module.exports = mdLinks;
+module.exports.mdLinks = mdLinks;
+module.exports.validateLinks = validateLinks;
+module.exports.returnLinks = returnLinks;
+module.exports.readMarkdown = readMarkdown;
+module.exports.uniqueLinks = uniqueLinks;
+module.exports.statsLinks = statsLinks;
+module.exports.validateExtensionFile = validateExtensionFile;
+
+// module.exports = {
+//   method: readMarkdown()
+// }
+
+// exports.method = readMarkdown() {};
+
+
+// module.exports= mdLinks;
+
+// module.exports = {
+//   mdLinks 
+// }

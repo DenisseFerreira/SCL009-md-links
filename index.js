@@ -6,10 +6,9 @@ let path;
 let optionFuction = [];
 
 //-------Uso de process----------
-process.argv.forEach((option, index, array) => {
+process.argv.forEach((option, index) => {
 
   if (index > 1 && index < 5) {
-    // console.log(option);
     if (index === 2) {
       path = option;
       // console.log(path);
@@ -22,4 +21,4 @@ process.argv.forEach((option, index, array) => {
   }
 });
 
-mdLinks(path, optionFuction)
+mdLinks.mdLinks(path,optionFuction)

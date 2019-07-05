@@ -1,58 +1,68 @@
 const mdLinks = require('../mdlinks.js');
-
+// const readMarkdown = require('../mdlinks.js');
 
 describe('mdLinks', () => {
 
-// //   it('should...', () => {
-// //     console.log('FIX ME!');
-// //   });
+it('Debería retornar la ruta de 1 archivo', async () => {
+  await expect(mdLinks.validateExtensionFile('test/test1.md')).resolves.toEqual(['test/test1.md']);
+});
 
-// // });
+it('Debería retornar un error al no ingresar bien un archivo', async () => {
+  await expect(mdLinks.validateExtensionFile('')).rejects.toEqual('No has ingresado un archivo');
+});
+
+it('Debería retornar la ruta de 2 archivos de un directorio', async () => {
+  await expect(mdLinks.validateExtensionFile('prueba_md/')).resolves.toEqual(
+    ['prueba_md/t1_prueba.md', 
+     'prueba_md/t2_prueba.md'  
+    ]);
+});
+
+it('Debería retornar un error al no ingresar bien un directorio', async () => {
+  await expect(mdLinks.validateExtensionFile('no_directorio_md/')).rejects.toEqual(
+    "Hay un error con tu directorio");
+});
 
 
-// // Debo testear: las promesas, el catch, el then.
-// // path file y opciones debe recibir mdLinks
 
+test('Debería retornar 2 links para el archivo test1.md', async () => {
+  await mdLinks.validateExtensionFile('test/test1.md');
+   
+  await expect(mdLinks.readMarkdown()).resolves.toEqual(
+    [ { href: 'https://www.js-y-npm',
+            text: 'Node.js y npm',
+            file: 'test/test1.md' },
+          { href: 'https://nejando-la-asincronia-en-javascript/',
+            text: 'Asíncronía en js',
+            file: 'test/test1.md' } ]
+  );
+});
 
-//links en un archivo
-it('Debería retornar 3 links para el archivo prueba.md', async() => {    
-  await expect(mdlinks.mdLinks('./prueba.md')).resolves.toEqual(
-    [{href:'https://www.js-y-npm', text:'Node.js y npm', file:'./prueba.md' },
-    {href: 'https://nejando-la-asincronia-en-javascript/', text:'Asíncronía en js', file:'./prueba.md'},
-    {href: 'https://docs.npmjs.com/getting-started/what-is-npm',text:'NPM', file:'./prueba.md'}]);
- });
-
-
-
-
- 
-// //stats de un archivo
-// test("mdLinks, deberia entregar Total Links: 3 Unique Links: 2 para el archivo test-file-1 con stats true",  () =>{
-//   expect(mdLinks.mdLinks("test/md-files-test/test-file-1.md",{stats:true})).resolves.toEqual("Total Links:"+3+"\n"+"Unique Links:"+2)
+// test('Debería retornar error para el archivo img.md que tiene imagenes', async () => {
+//   await mdLinks.validateExtensionFile('test/img.md');
+   
+//   await expect(mdLinks.readMarkdown()).rejects.toEqual('No encuentro links');
 // });
-//  });
 
-//  //validate de un archivo
-//  test("mdLinks, deberia entregar un array con objetos de cada link ", async () => {
-//    await expect(mdLinks.mdLinks("./prueba.md")).resolves.toEqual([{
-//        "file": "./prueba.md",
-//        "href": "https://docs.npmjs.com/getting-started/what-is-npm",
-//        "status": "OK 200",
-//        "text": "NPM"
-//      },
-//      {
-//        "file": "./prueba.md",
-//        "href": "https://docs.npmjs.com/getting-started/publishing-npm-packages ",
-//        "status": "OK 200",
-//        "text": "Crear módulos en Node.js"
-//      },
-//      {
-//        "file": "./prueba.md",
-//        "href": " https://es.wikipedia.org/wiki/Markjikjidown",
-//        "status": "Not Found 404",
-//        "text": "Markdown"
-//      }
-//    ])
- });
 
- 
+test('Debería retornar 2 links unicos para el archivo test2.md', async () => {
+  await mdLinks.validateExtensionFile('test/test2.md');
+  await mdLinks.readMarkdown();
+  expect(mdLinks.uniqueLinks()).toEqual( 
+    ["https://nejando-la-asincronia-en-javascript/",
+     "https://www.js-y-npm"]);
+});
+
+// test('Debería retornar el status de 2 links test1.md', async () => {
+//   await mdLinks.validateExtensionFile('test/test1.md');
+//   await mdLinks.readMarkdown();
+//   mdLinks.uniqueLinks();
+//   await expect(mdLinks.validateLinks()).toEqual( 
+//     ["test/test1.md https://www.js-y-npm Fail 400 Node.js y npm",
+//     "test/test1.md https://nejando-la-asincronia-en-javascript/ Fail 400 Asíncronía en js"]);
+// });
+
+
+});
+
+
