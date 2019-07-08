@@ -12,7 +12,7 @@ let stats = false;
 let addOk = 0;
 let addFail = 0;
 let linkslarge = 0;
-let unique = 0;
+let unique = [];
 let listFile = [];
 let path;
 
@@ -22,6 +22,7 @@ const returnLinks = ()=>{
 }
 
 const validateExtensionFile = (path) => {
+  links = [];
   return new Promise((res, reject) => {
     listFile = [];
     // validar si es archivo o directorio
@@ -68,7 +69,7 @@ const validateExtensionFile = (path) => {
 //-----Funcion para leer archivos------------
 const readMarkdown = () => {
   return new Promise((res, reject) => {
-links = [];
+    links = [];
     let listFileLarge = listFile.length;
     // console.log("busco archivo en readMarkdown", res);
     for (let index = 0; index < listFile.length; index++) {
@@ -116,8 +117,10 @@ links = [];
         
           if (listFileLarge === 0){
             if(links.length === 0){
-            
-              return console.log("No encuentro links en este archivo");
+              console.log("No encuentro links en este archivo");
+              res('No encuentro links en este archivo"');      
+              return ;
+              
             }else{
               res(links);
             }
@@ -131,39 +134,64 @@ links = [];
 
 //-----Contar UNIQUE----------
 const uniqueLinks = () => {
+  unique = [];
+  
   let urls = links.map(function (element) {
     return element.href;
   });
   let sorted = urls.sort();
 
-  unique = sorted.filter(function (value, index) {
+  unique = sorted.filter(function (value, index) { //Array "escondido"
     return value !== sorted[index + 1];
   });
-  return unique;
+  // return unique;  // Es un array
   // console.log(unique.length);
+
+  if(unique.length === 0){
+    unique.push("Algo ocurre, no podemos entregar tus links unicos");
+    console.log("Algo ocurre, no podemos entregar tus links unicos");
+    return unique;// Es un array
+  }else{
+    return unique;// Es un array
+  }
+  
 }
 
 //-----Stats, Estadisticas---------------
-const statsLinks = () => {
+const statsLinks = (validate, stats) => {
+  let resultStats = [];
   if (stats === true && validate === false) { // Corresponde al ingreso de --s
+    resultStats.push('Total: ' + links.length);
+    resultStats.push('Unique: ' + unique.length)
     console.log('Total: ' + links.length);
     console.log('Unique: ' + unique.length)
   }
 
   if (stats === true && validate === true) { // Corresponde al ingreso de --s y --v
+    resultStats.push('Total: ' + links.length);
+    resultStats.push('Unique: ' + unique.length)
+    resultStats.push('Broken: ' + addFail);
+    resultStats.push('Links ok: ' + addOk);
     console.log('Total: ' + links.length);
     console.log('Unique: ' + unique.length)
     console.log('Broken: ' + addFail);
     console.log('Links ok: ' + addOk);
   }
-}
+
+  if(resultStats.length === 0){
+    resultStats.push("Algo ocurre, no podemos entregar tus estadisticas");
+    console.log("Algo ocurre, no podemos entregar tus estadisticas");
+    return resultStats;
+  }else{
+    return resultStats;
+  }
+};
 
 //----------validar Links-------------
-const validateLinks = (links) => {
-  return Promise.all(links.map(link => {
+const validateLinks = (validate, stats) => {
+  let resultArray = []; // array para realizar test
 
-
-  return new Promise((res, reject) => {
+   return new Promise((res, reject) => {
     //Inicio contador de links ok y fail    
     addOk = 0;
     addFail = 0;
@@ -175,46 +203,42 @@ const validateLinks = (links) => {
           addOk++;
           linkslarge--;
           if (validate === false && stats === false) { // Sin ingreso de validate o stats
-           let noOption = (element.file + ' ' + element.href + ' ' + element.text);
-            // console.log(noOption);
-            res(noOption);
+            resultArray.push(element.file + ' ' + element.href + ' ' + element.text);
+            console.log(element.file + ' ' + element.href + ' ' + element.text);
           }
           if (validate === true && stats === false) { // Ingresa --validate
+            resultArray.push(element.file + ' ' + element.href + ' ' + response.statusText + ' ' + response.status + ' ' + element.text);
             console.log(element.file + ' ' + element.href + ' ' + response.statusText + ' ' + response.status + ' ' + element.text);
           }
 
           if (linkslarge === 0) {
-            res(element);
+            res(resultArray);
           }
-        })
-        .then(function (data) { // Data de la url
-          // console.log('data = ', data);
         })
         .catch(function (err) { // Url caida
-// console.log("Tienes un error en tu status", err);
-
-          // console.log(err);
+          // console.log("Tienes un error en tu status", err);
           linkslarge--;
           addFail++; // va sumando los errores
-          // console.log('catch url fail : ' + element.href);
-          // console.log('--------------------------------------------------------');
+
           if (validate === true && stats === false) {
+            resultArray.push(element.file + ' ' + element.href + ' ' + 'Fail' + ' ' + '400' + ' ' + element.text);
             console.log(element.file + ' ' + element.href + ' ' + 'Fail' + ' ' + '400' + ' ' + element.text);
           }
-          if (validate === false && stats === false) {
+          if (validate === false && stats === false) {  // en que momento uso este codigo?????????
+            resultArray.push(element.file + ' ' + element.href + ' ' + element.text);
             console.log(element.file + ' ' + element.href + ' ' + element.text);
           }
           if (linkslarge === 0) {
-            //   console.log(linkslarge);
- 
-            res(element);
-                reject("Error al leer estatus");
+            res(resultArray);      
+          }
+          if(resultArray === '') {
+            reject('Hay errores en tus links');
           }
         });
-    });
+
+    }); //----termina foreach 
   });
-}));
-} 
+}; 
 //------Fin validateLinks()----------
 
 
@@ -248,14 +272,8 @@ async function mdLinks(path, option) {
   await validateExtensionFile(path); //Funcion para validar la extension y si es archivo o directorio 
   await readMarkdown();
   uniqueLinks();
-  await validateLinks()
-    .then(res => {
-      console.log("RESPONSE:",res);
-    })
-    .catch(err => {
-      console.log("ERR:", err);
-    }) // Función Segunda promesa, debe estar aqui adentro por su demora en validar cada link. Estando afuera no es leida.
-  statsLinks();
+  await validateLinks(validate, stats); // Función Segunda promesa, debe estar aqui adentro por su demora en validar cada link. Estando afuera no es leida.
+  statsLinks(validate, stats);
 } // Fin funcion mdLinks
 
 module.exports.mdLinks = mdLinks;
