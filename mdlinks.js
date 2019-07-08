@@ -3,7 +3,7 @@
 /*Uso de librerias de node.js*/
 const fs = require('fs');
 const fetch = require("node-fetch");
-// const chalk = require('chalk');
+const chalk = require('chalk');
 
 /*Variables globales*/
 let links = [];
@@ -212,11 +212,11 @@ const validateLinks = (validate, stats) => {
           linkslarge--;
           if (validate === false && stats === false) { // Sin ingreso de validate o stats
             resultArray.push(element.file + ' ' + element.href + ' ' + element.text);
-            console.log(element.file + ' ' + element.href + ' ' + element.text);     
+            console.log(chalk.bold(element.file) + ' ' + element.href + ' ' + element.text);     
           }
           if (validate === true && stats === false) { // Ingresa --validate
             resultArray.push(element.file + ' ' + element.href + ' ' + response.statusText + ' ' + response.status + ' ' + element.text);
-            console.log(element.file + ' ' + element.href + ' ' + response.statusText + ' ' + response.status + ' ' + element.text);
+            console.log(chalk.bold(element.file) + ' ' + element.href + ' ' + chalk.magenta(response.statusText)+ ' ' + chalk.magenta(response.status) + ' ' + element.text);
           }
 
           if (linkslarge === 0) {
@@ -230,11 +230,11 @@ const validateLinks = (validate, stats) => {
 
           if (validate === true && stats === false) {
             resultArray.push(element.file + ' ' + element.href + ' ' + 'Fail' + ' ' + '400' + ' ' + element.text);
-            console.log(element.file + ' ' + element.href + ' ' + 'Fail' + ' ' + '400' + ' ' + element.text);
+            console.log(chalk.bold(element.file) + ' ' + element.href + ' ' + chalk.magenta('Fail')+ ' ' + chalk.magenta('400') + ' ' + element.text);
           }
           if (validate === false && stats === false) {  
             resultArray.push(element.file + ' ' + element.href + ' ' + element.text);
-            console.log(element.file + ' ' + element.href + ' ' + element.text);
+            console.log(chalk.bold(element.file) + ' ' + element.href + ' ' + element.text);
           }
           if (linkslarge === 0) {
             res(resultArray);      
