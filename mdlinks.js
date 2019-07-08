@@ -3,7 +3,7 @@
 /*Uso de librerias de node.js*/
 const fs = require('fs');
 const fetch = require("node-fetch");
-const chalk = require('chalk');
+// const chalk = require('chalk');
 
 /*Variables globales*/
 let links = [];
@@ -232,7 +232,7 @@ const validateLinks = (validate, stats) => {
             resultArray.push(element.file + ' ' + element.href + ' ' + 'Fail' + ' ' + '400' + ' ' + element.text);
             console.log(element.file + ' ' + element.href + ' ' + 'Fail' + ' ' + '400' + ' ' + element.text);
           }
-          if (validate === false && stats === false) {  // en que momento uso este codigo?????????
+          if (validate === false && stats === false) {  
             resultArray.push(element.file + ' ' + element.href + ' ' + element.text);
             console.log(element.file + ' ' + element.href + ' ' + element.text);
           }
@@ -268,7 +268,7 @@ async function mdLinks(path, option) { //recibe el array //puedo cambiar el "nom
       }
     })
 
-    
+
    if (flagError){
      console.log("No  es posible procesar");
      return;
