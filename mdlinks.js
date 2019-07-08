@@ -3,6 +3,7 @@
 /*Uso de librerias de node.js*/
 const fs = require('fs');
 const fetch = require("node-fetch");
+const chalk = require('chalk');
 
 /*Variables globales*/
 let links = [];
@@ -40,9 +41,11 @@ const validateExtensionFile = (path) => {
     else {
       fs.readdir(path, function (err, files) { //Callback
         if(err){
-          console.log(err);
+          // console.log(err);
+          // console.log("Hay un error con tu directorio"); 
           reject("Hay un error con tu directorio"); 
-          // return
+          // return 
+            // break;
         }
         if (files == undefined || files == '') {
           console.log('No es archivo con extension md');
@@ -62,7 +65,7 @@ const validateExtensionFile = (path) => {
         }
         res(listFile);
       });
-    }
+  }
   }) //-----Fin promise
 }; //-----Fin validateExtensionFile
 
@@ -77,7 +80,8 @@ const readMarkdown = () => {
         function (err, data) { //callback
           if (err) {  
             reject('No hay links en este archivo');      
-            return console.log(err);    
+            // console.log(err);    
+            return 
           }
         
           listFileLarge--;
@@ -178,12 +182,16 @@ const statsLinks = (validate, stats) => {
     console.log('Links ok: ' + addOk);
   }
 
-  if(resultStats.length === 0){
-    resultStats.push("Algo ocurre, no podemos entregar tus estadisticas");
-    console.log("Algo ocurre, no podemos entregar tus estadisticas");
-    return resultStats;
+  if (stats === true){
+    if (resultStats.length === 0) {
+      resultStats.push("Algo ocurre, no podemos entregar tus estadisticas");
+      console.log("Algo ocurre, no podemos entregar tus estadisticas");
+      return resultStats;
+    } else {
+      return resultStats;
+    }
   }else{
-    return resultStats;
+    return;
   }
 };
 
@@ -204,7 +212,7 @@ const validateLinks = (validate, stats) => {
           linkslarge--;
           if (validate === false && stats === false) { // Sin ingreso de validate o stats
             resultArray.push(element.file + ' ' + element.href + ' ' + element.text);
-            console.log(element.file + ' ' + element.href + ' ' + element.text);
+            console.log(element.file + ' ' + element.href + ' ' + element.text);     
           }
           if (validate === true && stats === false) { // Ingresa --validate
             resultArray.push(element.file + ' ' + element.href + ' ' + response.statusText + ' ' + response.status + ' ' + element.text);
@@ -244,7 +252,7 @@ const validateLinks = (validate, stats) => {
 
 //------------------Lectura de archivo---------------
 
-async function mdLinks(path, option) {
+async function mdLinks(path, option) { //recibe el array //puedo cambiar el "nombre"
   let flagError  = false;
   option.forEach(element => {
       if (element == '--validate' || element == '--v') {
@@ -260,6 +268,7 @@ async function mdLinks(path, option) {
       }
     })
 
+    
    if (flagError){
      console.log("No  es posible procesar");
      return;

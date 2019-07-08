@@ -122,11 +122,12 @@ test('Debería retornar Total: 10, Unique: 9, Broken: 3, Links ok: 7 para el arc
 });
 
 test('Debería retornar una alerta en caso de error en la estadistica', async () => {
-  await mdLinks.validateExtensionFile('./prueba.md');
-  await mdLinks.readMarkdown();
-  mdLinks.uniqueLinks();
-  await mdLinks.validateLinks();
-  expect(mdLinks.statsLinks(false, false)).toEqual( 
+  // await mdLinks.validateExtensionFile('./prueba.md');
+   await mdLinks.validateExtensionFile('test/test4.md');
+   await mdLinks.readMarkdown();
+   mdLinks.uniqueLinks();
+  // await mdLinks.validateLinks();
+  expect(mdLinks.statsLinks("", true)).toEqual( 
     ["Algo ocurre, no podemos entregar tus estadisticas"]);
 });
 });

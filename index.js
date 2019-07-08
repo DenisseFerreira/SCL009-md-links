@@ -14,7 +14,7 @@ process.argv.forEach((option, index) => {
       // console.log(path);
     } else {
       optionFuction.push(
-        option
+        option //´paso el index3 que es mi opcion
         // "opcion": option
       );
     }
